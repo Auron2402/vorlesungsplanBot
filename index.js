@@ -152,7 +152,7 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
             aLectures = [];
         }
 
-        sLectureToAdd = agent.parameters.lecture;
+        sLectureToAdd = agent.parameters.Vorlesung;
 
         if (sLectureToAdd !== null) {
             aLectures.push(sLectureToAdd);
@@ -172,23 +172,35 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     }
 
     function getLectures(agent) {
-        let lectureInfos = [];
-        let course = agent.getParameter('studiengang');
-        let semester = agent.getParameter('semester');
-        let date = agent.getParameter('date');
+        let lectureInfos = new Map();
 
-        if (course !== null) lectureInfos.push(course);
-        if (semester !== null) lectureInfos.push(semester);
-        if (date !== null) lectureInfos.push(date);
+        let course = agent.parameters.studiengang;
+        let semester = agent.parameters.semester;
+        let date = agent.parameters.date;
 
-        if (course === null) {
+        let infoContext = agent.getContext('collectedInfos');
+        if(infoContext !== null) {
+            if (course === '') course = infoContext.parameters.studiengang;
+            if (semester === '') semester = infoContext.parameters.semester;
+            if (date === '') date = infoContext.parameters.date;
+        }
+
+        lectureInfos.set('course', course);
+        lectureInfos.set('semester', semester);
+        lectureInfos.set('date', date);
+
+
+
+
+
+        if (course === '') {
             agent.add('Welcher Vorlesungsplan soll gesucht werden?');
             agent.add(new Suggestion('Informatik'));
             agent.add(new Suggestion('E-Commerce'));
             agent.add(new Suggestion('Wirtschafts Informatik'));
             agent.add(new Suggestion('Persönlicher Plan'));
-            agent.setFollowupEvent('askForCourse');
-        } else if (semester === null) {
+            // agent.setFollowupEvent('askForCourse');
+        } else if (semester === '') {
             agent.add('Welches Semester?');
             agent.add(new Suggestion('1'));
             agent.add(new Suggestion('2'));
@@ -196,19 +208,64 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
             agent.add(new Suggestion('4'));
             agent.add(new Suggestion('5'));
             agent.add(new Suggestion('6'));
-            agent.setFollowupEvent('askForSemester');
-        } else if ( date === null) {
+            // agent.setFollowupEvent('askForSemester');
+        } else if ( date === '') {
             agent.add('Für welchen Tag?');
             agent.add(new Suggestion(getVarDate()));
-            agent.add(new Suggestion(getVarDate() + 1));
-            agent.setFollowupEvent('askForDate'); //hopefully she says yes <3
+            agent.add(new Suggestion('Heute'));
+            agent.add(new Suggestion('Morgen'));
+            agent.add(new Suggestion('Übermorgen'));
+            agent.add(new Suggestion('Montag'));
+            agent.add(new Suggestion('Dienstag'));
+            agent.add(new Suggestion('Mittwoch'));
+            agent.add(new Suggestion('Donnerstag'));
+            agent.add(new Suggestion('Freitag'));
+            agent.add(new Suggestion('Samstag'));
+            agent.add(new Suggestion('Sonntag'));
+
+            // agent.setFollowupEvent('askForDate');
+
+        } else {
+            agent.add('Folgende infos extrahiert:');
+            agent.add('Vorlesungsplan: ' + course + typeof course);
+            agent.add('Semester: ' + semester);
+            agent.add('Date: ' + date);
         }
 
         agent.setContext({
             name: 'collectedInfos',
-            lifespan: 5,
+            lifespan: 2,
             parameters: lectureInfos
-        })
+        });
+    }
+
+    function askForCourse(agent) {
+        let context = agent.getContext('collectedInfos');
+        let date = context.parameters.date;
+        let semester = context.parameters.semester;
+        let course = agent.parameters.studiengang;
+
+        let lectureInfos = new Map();
+        lectureInfos.set('date', date);
+        lectureInfos.set('semester', semester);
+        lectureInfos.set('course', course);
+
+        agent.clearContext('collectedInfos');
+        agent.setContext({
+            name: 'collectedInfos',
+            lifespan: 2,
+            parameters: lectureInfos
+        });
+
+        agent.setFollowupEvent('getLectures');
+    }
+
+    function askForSemester(agent) {
+
+    }
+
+    function askForDate(agent) {
+
     }
 
     function fallback(agent) {
@@ -223,5 +280,8 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     intentMap.set('Default Fallback Intent', fallback);
     intentMap.set('getLectures', getLectures);
     intentMap.set('addLecture', addLecture);
+    intentMap.set('askForCourse', askForCourse);
+    intentMap.set('askForSemester', askForSemester);
+    intentMap.set('askForDate', askForDate);
     agent.handleRequest(intentMap);
 });

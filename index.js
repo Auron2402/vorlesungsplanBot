@@ -261,11 +261,45 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     }
 
     function askForSemester(agent) {
+        let context = agent.getContext('collectedInfos');
+        let date = context.parameters.date;
+        let semester = agent.parameters.semester;
+        let course = context.parameters.studiengang;
 
+        let lectureInfos = new Map();
+        lectureInfos.set('date', date);
+        lectureInfos.set('semester', semester);
+        lectureInfos.set('course', course);
+
+        agent.clearContext('collectedInfos');
+        agent.setContext({
+            name: 'collectedInfos',
+            lifespan: 2,
+            parameters: lectureInfos
+        });
+
+        agent.setFollowupEvent('getLectures');
     }
 
     function askForDate(agent) {
+        let context = agent.getContext('collectedInfos');
+        let date = agent.parameters.date;
+        let semester = context.parameters.semester;
+        let course = context.parameters.studiengang;
 
+        let lectureInfos = new Map();
+        lectureInfos.set('date', date);
+        lectureInfos.set('semester', semester);
+        lectureInfos.set('course', course);
+
+        agent.clearContext('collectedInfos');
+        agent.setContext({
+            name: 'collectedInfos',
+            lifespan: 2,
+            parameters: lectureInfos
+        });
+
+        agent.setFollowupEvent('getLectures');
     }
 
     function fallback(agent) {

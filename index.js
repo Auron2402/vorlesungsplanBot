@@ -178,7 +178,8 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
         let semester = agent.parameters.semester;
         let date = agent.parameters.date;
 
-        let infoContext = agent.getContext('collectedInfos');
+        let infoContext = agent.getContext('collectedinfos');
+        
         if(infoContext !== null) {
             if (course === '') course = infoContext.parameters.studiengang;
             if (semester === '') semester = infoContext.parameters.semester;
@@ -233,14 +234,14 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
         }
 
         agent.setContext({
-            name: 'collectedInfos',
+            name: 'collectedinfos',
             lifespan: 2,
             parameters: lectureInfos
         });
     }
 
     function askForCourse(agent) {
-        let context = agent.getContext('collectedInfos');
+        let context = agent.getContext('collectedinfos');
         let date = context.parameters.date;
         let semester = context.parameters.semester;
         let course = agent.parameters.studiengang;
@@ -250,9 +251,9 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
         lectureInfos.set('semester', semester);
         lectureInfos.set('course', course);
 
-        agent.clearContext('collectedInfos');
+        agent.clearOutgoingContexts();
         agent.setContext({
-            name: 'collectedInfos',
+            name: 'collectedinfos',
             lifespan: 2,
             parameters: lectureInfos
         });
@@ -261,7 +262,7 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     }
 
     function askForSemester(agent) {
-        let context = agent.getContext('collectedInfos');
+        let context = agent.getContext('collectedinfos');
         let date = context.parameters.date;
         let semester = agent.parameters.semester;
         let course = context.parameters.studiengang;
@@ -271,9 +272,9 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
         lectureInfos.set('semester', semester);
         lectureInfos.set('course', course);
 
-        agent.clearContext('collectedInfos');
+        agent.clearOutgoingContexts();
         agent.setContext({
-            name: 'collectedInfos',
+            name: 'collectedinfos',
             lifespan: 2,
             parameters: lectureInfos
         });
@@ -282,7 +283,7 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     }
 
     function askForDate(agent) {
-        let context = agent.getContext('collectedInfos');
+        let context = agent.getContext('collectedinfos');
         let date = agent.parameters.date;
         let semester = context.parameters.semester;
         let course = context.parameters.studiengang;
@@ -292,9 +293,10 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
         lectureInfos.set('semester', semester);
         lectureInfos.set('course', course);
 
-        agent.clearContext('collectedInfos');
+        agent.clearOutgoingContexts();
+
         agent.setContext({
-            name: 'collectedInfos',
+            name: 'collectedinfos',
             lifespan: 2,
             parameters: lectureInfos
         });

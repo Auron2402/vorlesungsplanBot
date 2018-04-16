@@ -51,7 +51,7 @@ const wikipediaRankineImageUrl = 'https://upload.wikimedia.org/wikipedia/commons
 
 exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     const agent = new WebhookClient({request, response});
-    console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers, undefined, 2));
+    // console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers, undefined, 2));
     console.log('Dialogflow Request body: ' + JSON.stringify(request.body, undefined, 2));
 
     function welcome(agent) {
@@ -185,33 +185,45 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     function getLectures(agent) {
         let lectureInfos = new Map();
 
-        let course = agent.parameters.studiengang;
-        let semester = agent.parameters.semester;
-        let date = agent.parameters.date;
+        let studiengang = '';
+        let semester = '';
+        let date = '';
+
+        let parastudiengang = agent.parameters.studiengang;
+        let parasemester = agent.parameters.semester;
+        let paradate = agent.parameters.date;
+
+        if(parastudiengang !== undefined) studiengang = parastudiengang;
+        if(parasemester !== undefined) semester = parasemester;
+        if(paradate !== undefined) date = paradate;
 
         let infoContext = agent.getContext('collectedinfos');
-        
+
         if(infoContext !== null) {
-            if (course === '') course = infoContext.parameters.studiengang;
-            if (semester === '') semester = infoContext.parameters.semester;
-            if (date === '') date = infoContext.parameters.date;
+            let contextstudiengang = infoContext.parameters.studiengang;
+            let contextsemester = infoContext.parameters.semester;
+            let contextdate = infoContext.parameters.date;
+
+            if(contextstudiengang !== '') studiengang = contextstudiengang;
+            if(contextsemester !== '') semester = contextsemester;
+            if(contextdate !== '') date = contextdate;
         }
 
-        lectureInfos.set('course', course);
+        agent.add('preIfDATA: ');
+        agent.add(typeof studiengang + ' studiengang: ' + studiengang);
+        agent.add(typeof semester + ' semester: ' + semester);
+        agent.add(typeof date + ' date: ' + date);
+
+        lectureInfos.set('studiengang', studiengang);
         lectureInfos.set('semester', semester);
         lectureInfos.set('date', date);
 
-
-
-
-
-        if (course === '') {
+        if (studiengang === '') {
             agent.add('Welcher Vorlesungsplan soll gesucht werden?');
             agent.add(new Suggestion('Informatik'));
             agent.add(new Suggestion('E-Commerce'));
             agent.add(new Suggestion('Wirtschafts Informatik'));
             agent.add(new Suggestion('Persönlicher Plan'));
-            // agent.setFollowupEvent('askForCourse');
         } else if (semester === '') {
             agent.add('Welches Semester?');
             agent.add(new Suggestion('1'));
@@ -220,10 +232,8 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
             agent.add(new Suggestion('4'));
             agent.add(new Suggestion('5'));
             agent.add(new Suggestion('6'));
-            // agent.setFollowupEvent('askForSemester');
-        } else if ( date === '') {
+        } else if (date === '') {
             agent.add('Für welchen Tag?');
-            agent.add(new Suggestion(getVarDate()));
             agent.add(new Suggestion('Heute'));
             agent.add(new Suggestion('Morgen'));
             agent.add(new Suggestion('Übermorgen'));
@@ -234,85 +244,99 @@ exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
             agent.add(new Suggestion('Freitag'));
             agent.add(new Suggestion('Samstag'));
             agent.add(new Suggestion('Sonntag'));
-
-            // agent.setFollowupEvent('askForDate');
-
         } else {
             agent.add('Folgende infos extrahiert:');
-            agent.add('Vorlesungsplan: ' + course + typeof course);
+            agent.add('Vorlesungsplan: ' + studiengang + typeof studiengang);
             agent.add('Semester: ' + semester);
             agent.add('Date: ' + date);
         }
 
         agent.setContext({
             name: 'collectedinfos',
-            lifespan: 2,
+            lifespan: 10,
             parameters: lectureInfos
         });
     }
 
     function askForCourse(agent) {
         let context = agent.getContext('collectedinfos');
-        let date = context.parameters.date;
-        let semester = context.parameters.semester;
-        let course = agent.parameters.studiengang;
-
         let lectureInfos = new Map();
-        lectureInfos.set('date', date);
-        lectureInfos.set('semester', semester);
-        lectureInfos.set('course', course);
 
-        agent.clearOutgoingContexts();
+        if(context !== null) {
+            let date = context.parameters.date;
+            let semester = context.parameters.semester;
+
+            lectureInfos.set('date', date);
+            lectureInfos.set('semester', semester);
+            } else {
+            lectureInfos.set('date', '');
+            lectureInfos.set('semester', '');
+            }
+
+        let studiengang = agent.parameters.studiengang;
+        lectureInfos.set('studiengang', studiengang);
+
         agent.setContext({
             name: 'collectedinfos',
-            lifespan: 2,
+            lifespan: 10,
             parameters: lectureInfos
         });
 
-        agent.setFollowupEvent('getLectures');
+        getLectures(agent);
     }
 
     function askForSemester(agent) {
         let context = agent.getContext('collectedinfos');
-        let date = context.parameters.date;
-        let semester = agent.parameters.semester;
-        let course = context.parameters.studiengang;
-
         let lectureInfos = new Map();
-        lectureInfos.set('date', date);
-        lectureInfos.set('semester', semester);
-        lectureInfos.set('course', course);
 
-        agent.clearOutgoingContexts();
+        if(context !== null) {
+            let date = context.parameters.date;
+            let studiengang = context.parameters.studiengang;
+
+            lectureInfos.set('date', date);
+            lectureInfos.set('studiengang', studiengang);
+        } else {
+            lectureInfos.set('date', '');
+            lectureInfos.set('studiengang', '');
+        }
+
+        let semester = agent.parameters.semester;
+        lectureInfos.set('semester', semester);
+
         agent.setContext({
             name: 'collectedinfos',
-            lifespan: 2,
+            lifespan: 10,
             parameters: lectureInfos
         });
 
-        agent.setFollowupEvent('getLectures');
+        getLectures(agent);
     }
 
     function askForDate(agent) {
         let context = agent.getContext('collectedinfos');
-        let date = agent.parameters.date;
-        let semester = context.parameters.semester;
-        let course = context.parameters.studiengang;
-
         let lectureInfos = new Map();
-        lectureInfos.set('date', date);
-        lectureInfos.set('semester', semester);
-        lectureInfos.set('course', course);
 
-        agent.clearOutgoingContexts();
+        if(context !== null) {
+            let studiengang = context.parameters.studiengang;
+            let semester = context.parameters.semester;
+
+            lectureInfos.set('studiengang', studiengang);
+            lectureInfos.set('semester', semester);
+        } else {
+            lectureInfos.set('stuidengang', '');
+            lectureInfos.set('semester', '');
+        }
+
+        let date = agent.parameters.date;
+        lectureInfos.set('date', date);
 
         agent.setContext({
             name: 'collectedinfos',
-            lifespan: 2,
+            lifespan: 10,
             parameters: lectureInfos
         });
 
-        agent.setFollowupEvent('getLectures');
+        getLectures(agent);
     }
 
     function fallback(agent) {

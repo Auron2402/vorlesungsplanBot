@@ -23,6 +23,17 @@
 const functions = require('firebase-functions');
 const {WebhookClient} = require('dialogflow-fulfillment');
 const {Text, Card, Image, Suggestion, Payload} = require('dialogflow-fulfillment');
+const firebase = require('firebase');
+
+var config = {
+    apiKey: "AIzaSyADFmL3IGmwvD6kRto6bHWfZy1dcQtBL2w",
+    authDomain: "vorlesungsplanbot.firebaseapp.com",
+    databaseURL: "https://vorlesungsplanbot.firebaseio.com",
+    projectId: "vorlesungsplanbot",
+    storageBucket: "vorlesungsplanbot.appspot.com",
+    messagingSenderId: "604550375890"
+};
+firebase.initializeApp(config);
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 
@@ -40,8 +51,8 @@ const wikipediaRankineImageUrl = 'https://upload.wikimedia.org/wikipedia/commons
 
 exports.vorlesungsplanBot = functions.https.onRequest((request, response) => {
     const agent = new WebhookClient({request, response});
-    console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
-    console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+    console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers, undefined, 2));
+    console.log('Dialogflow Request body: ' + JSON.stringify(request.body, undefined, 2));
 
     function welcome(agent) {
         agent.add(`Welcome to the temperature converter!`);

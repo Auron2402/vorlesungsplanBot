@@ -32,3 +32,46 @@
 [debug] [2018-04-16T07:10:00.255Z] Starting @google-cloud/functions-emulator
 [debug] [2018-04-16T07:10:02.814Z] Parsing function triggers
 [info] +  functions: vorlesungsplanBot: http://localhost:5000/vorlesungsplanbot/us-central1/vorlesungsplanBot
+[debug] [2018-04-17T11:02:44.389Z] ----------------------------------------------------------------------
+[debug] [2018-04-17T11:02:44.391Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Neuer\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve --only functions
+[debug] [2018-04-17T11:02:44.391Z] CLI Version:   3.18.4
+[debug] [2018-04-17T11:02:44.391Z] Platform:      win32
+[debug] [2018-04-17T11:02:44.391Z] Node Version:  v8.11.1
+[debug] [2018-04-17T11:02:44.391Z] Time:          Tue Apr 17 2018 13:02:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:44.391Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-04-17T11:02:44.402Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-17T11:02:44.403Z] > authorizing via signed-in user
+[debug] [2018-04-17T11:02:44.404Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-04-17T11:02:44.404Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/vE2_uYPEdx6YVBkAc6ycfjtetcdpwTCdvxJZK_b4iu8',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Tue Apr 17 2018 13:02:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:44.573Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-17T11:02:44.579Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/vorlesungsplanbot  
+  
+ Tue Apr 17 2018 13:02:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:45.286Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-17T11:02:45.287Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/vorlesungsplanbot/tokens  
+  
+ Tue Apr 17 2018 13:02:45 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:45.943Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-17T11:02:45.944Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/vorlesungsplanbot  
+  
+ Tue Apr 17 2018 13:02:45 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:46.763Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Neuer\PhpstormProjects\vorlesungsplanBot'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-04-17T11:02:47.578Z] Fetching environment
+[debug] [2018-04-17T11:02:47.581Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/604550375890:getServerAppConfig  
+  
+ Tue Apr 17 2018 13:02:47 GMT+0200 (Mitteleuropäische Sommerzeit)
+[debug] [2018-04-17T11:02:48.173Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-17T11:02:48.173Z] Starting @google-cloud/functions-emulator
+[debug] [2018-04-17T11:02:49.693Z] Parsing function triggers
+[info] +  functions: vorlesungsplanBot: http://localhost:5000/vorlesungsplanbot/us-central1/vorlesungsplanBot
